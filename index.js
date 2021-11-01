@@ -1,48 +1,13 @@
 const express = require('express'); // import express from 'express'
-const bodyParser = require('body-parser');
+const routes = require("./routes");
+const bp = require("./bodyParser");
 const app = express();
 const PORT = process.env.PORT || 5000;
+const bodyParser = require('body-parser');
 
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
-
-// parse application/json
-app.use(bodyParser.json());
-
-let cards = [
-        {id: '1', name: 'First Card', status: 'todo', priority: 2},
-        {id: '2', name: 'Second Card', status: 'progress', priority: 5},
-        {id: '3', name: 'Next Card', status: 'review', priority: 10},
-]
-
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
-
-app.get('/card', (req, res) => {
-    res.send(cards)
-})
-
-app.delete('/card/:cardId', (req, res) => {
-    const cardId = req.params.cardId;
-    cards = cards.filter(el => el.id !== cardId);
-    res.send(cards);
-})
-
-app.post ('/card', (req, res) => {
-    console.log(req);
-    const card = req.body;
-    cards.push({id: Math.random().toString(), ...card});
-    res.send('Card created')
-})
-
-app.patch ('/card/:cardId', (req, res) => {
-    const cardId = req.params.cardId;
-    const card = req.body;
-    cards = cards.map(el => el.id === cardId ? ({ ...card, id: el.id }) : el );
-    res.send('Card updated');
-})
+bp(app);
+routes(app);
 
 app.listen(PORT, () => {
     console.log(`Example app listening at http://localhost:${PORT}`)
